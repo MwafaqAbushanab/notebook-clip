@@ -4101,83 +4101,89 @@ Contact your account manager or:
     const currentTraining = trainingAudience === 'internal' ? internalTraining : externalTraining;
 
     return (
-      <div className="p-6 space-y-6">
-        {/* Audience Toggle */}
+      <div className="p-6 space-y-8">
+        {/* Header */}
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-bold dark:text-white">Training Materials</h2>
-          <div className="flex bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
+          <div>
+            <h2 className="text-2xl font-semibold text-gray-900 dark:text-white tracking-tight">Training Materials</h2>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Comprehensive learning resources for the CLIP program</p>
+          </div>
+          <div className="flex bg-gray-100 dark:bg-gray-800 rounded-xl p-1.5 ring-1 ring-gray-200 dark:ring-gray-700">
             <button
               onClick={() => setTrainingAudience('internal')}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all ${
                 trainingAudience === 'internal'
-                  ? 'bg-white dark:bg-gray-600 text-blue-600 dark:text-blue-400 shadow'
-                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-800'
+                  ? 'bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm ring-1 ring-gray-200 dark:ring-gray-600'
+                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
               }`}
             >
-              <Briefcase className="w-4 h-4 inline mr-2" />
-              Internal Users
+              <Briefcase className="w-4 h-4" />
+              Internal
             </button>
             <button
               onClick={() => setTrainingAudience('external')}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all ${
                 trainingAudience === 'external'
-                  ? 'bg-white dark:bg-gray-600 text-blue-600 dark:text-blue-400 shadow'
-                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-800'
+                  ? 'bg-white dark:bg-gray-700 text-emerald-600 dark:text-emerald-400 shadow-sm ring-1 ring-gray-200 dark:ring-gray-600'
+                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
               }`}
             >
-              <Building className="w-4 h-4 inline mr-2" />
-              Credit Union Partners
+              <Building className="w-4 h-4" />
+              Partners
             </button>
           </div>
         </div>
 
-        {/* Description */}
-        <div className={`p-4 rounded-lg ${
+        {/* Description Banner */}
+        <div className={`p-5 rounded-xl transition-colors ${
           trainingAudience === 'internal'
-            ? 'bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800'
-            : 'bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800'
+            ? 'bg-blue-50 dark:bg-blue-500/10 ring-1 ring-blue-200 dark:ring-blue-500/20'
+            : 'bg-emerald-50 dark:bg-emerald-500/10 ring-1 ring-emerald-200 dark:ring-emerald-500/20'
         }`}>
-          <p className={`text-sm ${
+          <p className={`text-sm font-medium ${
             trainingAudience === 'internal'
-              ? 'text-blue-700 dark:text-blue-300'
-              : 'text-green-700 dark:text-green-300'
+              ? 'text-blue-800 dark:text-blue-300'
+              : 'text-emerald-800 dark:text-emerald-300'
           }`}>
             {trainingAudience === 'internal'
-              ? '🎓 Internal training for Rise Analytics / Trellance team members working on CLIP processing and support.'
-              : '🏦 Training materials for credit union partners who submit data and receive CLIP analysis results.'}
+              ? 'Internal training for Rise Analytics / Trellance team members working on CLIP processing and support.'
+              : 'Training materials for credit union partners who submit data and receive CLIP analysis results.'}
+          </p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+            {currentTraining.length} modules available
           </p>
         </div>
 
-        {/* Training Modules */}
+        {/* Training Modules Grid */}
         <div className="grid gap-4">
           {currentTraining.map((module, idx) => (
-            <div key={idx} className="bg-white dark:bg-gray-800 rounded-xl border dark:border-gray-700 overflow-hidden hover:shadow-lg transition-shadow">
-              <div className="p-5">
+            <div key={idx} className="group bg-white dark:bg-gray-900 rounded-2xl ring-1 ring-gray-200 dark:ring-gray-800 overflow-hidden hover:ring-2 hover:ring-blue-500/50 dark:hover:ring-blue-400/50 transition-all hover:shadow-lg">
+              <div className="p-6">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-2">
-                      <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                    <div className="flex items-center gap-4 mb-3">
+                      <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-transform group-hover:scale-105 ${
                         trainingAudience === 'internal'
-                          ? 'bg-blue-100 dark:bg-blue-900/30'
-                          : 'bg-green-100 dark:bg-green-900/30'
+                          ? 'bg-blue-100 dark:bg-blue-500/20'
+                          : 'bg-emerald-100 dark:bg-emerald-500/20'
                       }`}>
-                        <GraduationCap className={`w-5 h-5 ${
+                        <GraduationCap className={`w-6 h-6 ${
                           trainingAudience === 'internal'
                             ? 'text-blue-600 dark:text-blue-400'
-                            : 'text-green-600 dark:text-green-400'
+                            : 'text-emerald-600 dark:text-emerald-400'
                         }`} />
                       </div>
                       <div>
-                        <h3 className="font-semibold dark:text-white">{module.title}</h3>
-                        <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
-                          <Clock className="w-3 h-3" /> {module.duration}
+                        <h3 className="font-semibold text-gray-900 dark:text-white text-lg">{module.title}</h3>
+                        <p className="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-1.5 mt-0.5">
+                          <Clock className="w-3.5 h-3.5" /> {module.duration}
                         </p>
                       </div>
                     </div>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">{module.description}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 leading-relaxed">{module.description}</p>
                     <div className="flex flex-wrap gap-2">
                       {module.topics.map((topic, tidx) => (
-                        <span key={tidx} className="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 text-xs rounded-full">
+                        <span key={tidx} className="px-2.5 py-1 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-xs rounded-lg font-medium">
                           {topic}
                         </span>
                       ))}
@@ -4185,20 +4191,20 @@ Contact your account manager or:
                   </div>
                   <button
                     onClick={() => setExpandedModule(expandedModule === idx ? null : idx)}
-                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium transition-all shadow-sm hover:shadow-md ${
                       trainingAudience === 'internal'
-                        ? 'bg-blue-600 hover:bg-blue-700 text-white'
-                        : 'bg-green-600 hover:bg-green-700 text-white'
+                        ? 'bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white'
+                        : 'bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white'
                     }`}
                   >
                     {expandedModule === idx ? (
                       <>
-                        <ChevronUp className="w-4 h-4 inline mr-1" />
+                        <ChevronUp className="w-4 h-4" />
                         Close
                       </>
                     ) : (
                       <>
-                        <Play className="w-4 h-4 inline mr-1" />
+                        <Play className="w-4 h-4" />
                         Start
                       </>
                     )}
@@ -4207,34 +4213,35 @@ Contact your account manager or:
 
                 {/* Expanded Training Content */}
                 {expandedModule === idx && (
-                  <div className="border-t dark:border-gray-700 p-5 bg-gray-50 dark:bg-gray-800/50">
-                    <div className="prose prose-sm dark:prose-invert max-w-none bg-white dark:bg-gray-800 p-5 rounded-lg border dark:border-gray-700">
+                  <div className="border-t border-gray-200 dark:border-gray-800 p-6 bg-gray-50 dark:bg-gray-950/50">
+                    <div className="prose prose-sm dark:prose-invert max-w-none bg-white dark:bg-gray-900 p-6 rounded-xl ring-1 ring-gray-200 dark:ring-gray-800">
                       <ReactMarkdown
                         components={{
-                          h1: ({children}) => <h1 className="text-xl font-bold text-gray-900 dark:text-white mb-3">{children}</h1>,
-                          h2: ({children}) => <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-2 mt-4">{children}</h2>,
-                          h3: ({children}) => <h3 className="text-base font-semibold text-gray-800 dark:text-gray-200 mb-2 mt-3">{children}</h3>,
-                          p: ({children}) => <p className="text-gray-700 dark:text-gray-300 mb-3 leading-relaxed">{children}</p>,
-                          strong: ({children}) => <strong className="font-bold text-gray-900 dark:text-white">{children}</strong>,
-                          ul: ({children}) => <ul className="list-disc list-inside mb-3 space-y-1 text-gray-700 dark:text-gray-300">{children}</ul>,
-                          ol: ({children}) => <ol className="list-decimal list-inside mb-3 space-y-1 text-gray-700 dark:text-gray-300">{children}</ol>,
-                          li: ({children}) => <li className="text-gray-700 dark:text-gray-300">{children}</li>,
-                          code: ({children}) => <code className="bg-gray-100 dark:bg-gray-700 px-1.5 py-0.5 rounded text-sm font-mono text-blue-600 dark:text-blue-400">{children}</code>,
-                          blockquote: ({children}) => <blockquote className="border-l-4 border-blue-500 pl-4 italic text-gray-600 dark:text-gray-400 my-3">{children}</blockquote>,
+                          h1: ({children}) => <h1 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">{children}</h1>,
+                          h2: ({children}) => <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-3 mt-6">{children}</h2>,
+                          h3: ({children}) => <h3 className="text-base font-medium text-gray-800 dark:text-gray-200 mb-2 mt-4">{children}</h3>,
+                          p: ({children}) => <p className="text-gray-600 dark:text-gray-300 mb-4 leading-relaxed">{children}</p>,
+                          strong: ({children}) => <strong className="font-semibold text-gray-900 dark:text-white">{children}</strong>,
+                          ul: ({children}) => <ul className="list-disc list-outside ml-5 mb-4 space-y-2 text-gray-600 dark:text-gray-300">{children}</ul>,
+                          ol: ({children}) => <ol className="list-decimal list-outside ml-5 mb-4 space-y-2 text-gray-600 dark:text-gray-300">{children}</ol>,
+                          li: ({children}) => <li className="text-gray-600 dark:text-gray-300 leading-relaxed">{children}</li>,
+                          code: ({children}) => <code className="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded-md text-sm font-mono text-blue-600 dark:text-blue-400">{children}</code>,
+                          blockquote: ({children}) => <blockquote className="border-l-4 border-blue-500 pl-4 italic text-gray-500 dark:text-gray-400 my-4">{children}</blockquote>,
                         }}
                       >
                         {module.content}
                       </ReactMarkdown>
                     </div>
-                    <div className="mt-4 flex items-center justify-between">
-                      <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
-                        <CheckCircle className="w-4 h-4 text-green-500" />
+                    <div className="mt-5 flex items-center justify-between">
+                      <div className="flex items-center gap-2.5 text-sm text-gray-500 dark:text-gray-400">
+                        <CheckCircle className="w-5 h-5 text-emerald-500" />
                         <span>Mark as completed when done reviewing</span>
                       </div>
                       <button
                         onClick={() => setExpandedModule(null)}
-                        className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg text-sm hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                        className="flex items-center gap-2 px-4 py-2.5 bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-xl text-sm font-medium hover:bg-gray-300 dark:hover:bg-gray-700 transition-all"
                       >
+                        <ChevronUp className="w-4 h-4" />
                         Close Module
                       </button>
                     </div>
@@ -4374,81 +4381,83 @@ Contact your account manager or:
   ];
 
   return (
-    <div className={`min-h-screen ${darkMode ? 'dark bg-gray-900' : 'bg-gray-100'}`}>
+    <div className={`min-h-screen ${darkMode ? 'dark bg-gray-950' : 'bg-gray-50'}`}>
       {/* Header */}
-      <header className="bg-white dark:bg-gray-800 border-b dark:border-gray-700 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-slate-800 dark:bg-slate-700 rounded-lg flex items-center justify-center text-white font-bold shadow-sm border border-slate-600">
-              CL
+      <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 sticky top-0 z-50 shadow-sm">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="w-11 h-11 bg-blue-600 dark:bg-blue-500 rounded-xl flex items-center justify-center text-white font-semibold text-lg shadow-lg shadow-blue-600/20">
+              CP
             </div>
             <div>
-              <h1 className="font-bold text-lg dark:text-white">CLIP Knowledge Base</h1>
-              <p className="text-xs text-gray-500 dark:text-gray-400">NotebookLM-style Interface</p>
+              <h1 className="font-semibold text-lg text-gray-900 dark:text-white tracking-tight">Notebook CP</h1>
+              <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">CLIP Knowledge Dashboard</p>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             {/* Ollama Status Indicator */}
-            <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium ${
+            <div className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
               ollamaConnected
-                ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400'
-                : 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400'
+                ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 ring-1 ring-emerald-200 dark:ring-emerald-500/20'
+                : 'bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 ring-1 ring-amber-200 dark:ring-amber-500/20'
             }`}>
-              <div className={`w-2 h-2 rounded-full ${ollamaConnected ? 'bg-green-500 animate-pulse' : 'bg-yellow-500'}`} />
+              <div className={`w-2 h-2 rounded-full ${ollamaConnected ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'}`} />
               {ollamaConnected ? 'AI Connected' : 'Local Mode'}
             </div>
+            <div className="w-px h-6 bg-gray-200 dark:bg-gray-700 mx-1" />
             <button
               onClick={() => setShowExportModal(true)}
-              className="flex items-center gap-2 px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 active:bg-blue-800 transition-all text-sm font-medium shadow-sm hover:shadow-md"
             >
               <Share2 className="w-4 h-4" />
-              Export to Confluence
+              <span className="hidden sm:inline">Export</span>
             </button>
             <button
               onClick={() => setShowSourcePanel(!showSourcePanel)}
-              className={`p-2 rounded-lg transition-colors ${showSourcePanel ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600' : 'hover:bg-gray-100 dark:hover:bg-gray-700'}`}
+              className={`p-2.5 rounded-lg transition-all ${showSourcePanel ? 'bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 ring-1 ring-blue-200 dark:ring-blue-500/30' : 'text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300'}`}
+              title="Toggle source panel"
             >
               <FileText className="w-5 h-5" />
             </button>
             <button
               onClick={() => setDarkMode(!darkMode)}
-              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+              className="p-2.5 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 rounded-lg transition-all"
               title="Toggle dark mode (Ctrl+D)"
             >
-              {darkMode ? <Sun className="w-5 h-5 text-yellow-500" /> : <Moon className="w-5 h-5 text-gray-500" />}
+              {darkMode ? <Sun className="w-5 h-5 text-amber-500" /> : <Moon className="w-5 h-5" />}
             </button>
             <button
               onClick={() => setShowKeyboardHelp(true)}
-              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+              className="p-2.5 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 rounded-lg transition-all"
               title="Keyboard shortcuts (?)"
             >
-              <Keyboard className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+              <Keyboard className="w-5 h-5" />
             </button>
           </div>
         </div>
 
         {/* Tabs */}
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex gap-1">
+        <div className="max-w-7xl mx-auto px-6">
+          <nav className="flex gap-1 -mb-px">
             {tabs.map((tab) => {
               const Icon = tab.icon;
               return (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-2 px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
+                  className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-all ${
                     activeTab === tab.id
-                      ? 'border-blue-600 text-blue-600 dark:text-blue-400'
-                      : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-800'
+                      ? 'border-blue-600 text-blue-600 dark:text-blue-400 bg-blue-50/50 dark:bg-blue-500/5'
+                      : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800/50'
                   }`}
                 >
                   <Icon className="w-4 h-4" />
-                  {tab.label}
+                  <span>{tab.label}</span>
                 </button>
               );
             })}
-          </div>
+          </nav>
         </div>
       </header>
 
@@ -4456,14 +4465,17 @@ Contact your account manager or:
       <main className="max-w-7xl mx-auto">
         {activeTab === 'notebook' && <NotebookTab />}
         {activeTab === 'chat' && (
-          <div className="p-4">
-            <div className="flex flex-col h-[calc(100vh-140px)]">
-              <div className="bg-slate-800 dark:bg-slate-900 rounded-t-xl p-4 text-white border-b border-slate-700">
-                <h2 className="text-xl font-semibold flex items-center gap-2">
-                  <MessageSquare className="w-5 h-5" /> Ask about CLIP
+          <div className="p-6">
+            <div className="flex flex-col h-[calc(100vh-160px)] bg-white dark:bg-gray-900 rounded-2xl shadow-sm ring-1 ring-gray-200 dark:ring-gray-800 overflow-hidden">
+              <div className="bg-gray-900 dark:bg-gray-950 px-6 py-5 text-white">
+                <h2 className="text-xl font-semibold flex items-center gap-3">
+                  <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center">
+                    <MessageSquare className="w-5 h-5" />
+                  </div>
+                  Ask about CLIP
                 </h2>
-                <p className="text-sm text-slate-300 mt-1">
-                  I only answer from the CLIP knowledge base - no external information
+                <p className="text-sm text-gray-400 mt-2 ml-13">
+                  Answers are generated exclusively from the CLIP knowledge base
                 </p>
               </div>
 
@@ -4573,16 +4585,16 @@ Contact your account manager or:
                 <div ref={chatEndRef} />
               </div>
 
-              <div className="p-4 bg-white dark:bg-gray-800 border-t dark:border-gray-700 rounded-b-xl">
-                <div className="flex gap-2">
+              <div className="p-4 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
+                <div className="flex gap-3">
                   {/* Voice Input Button */}
                   {voiceSupported && (
                     <button
                       onClick={toggleVoiceInput}
-                      className={`px-3 py-2 rounded-xl transition-all ${
+                      className={`p-3 rounded-xl transition-all ${
                         isListening
-                          ? 'bg-red-500 text-white animate-pulse'
-                          : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                          ? 'bg-red-500 text-white shadow-lg shadow-red-500/30 animate-pulse'
+                          : 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600 hover:text-gray-700'
                       }`}
                       title={isListening ? 'Stop listening' : 'Voice input'}
                     >
@@ -4595,19 +4607,19 @@ Contact your account manager or:
                     onChange={(e) => setChatInput(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSendMessage()}
                     placeholder={isListening ? "Listening... speak now" : "Ask about CLIP parameters, process, TransUnion..."}
-                    className={`flex-1 px-4 py-2 border dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 ${isListening ? 'border-red-500 ring-2 ring-red-200' : ''}`}
+                    className={`flex-1 px-4 py-3 rounded-xl bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white dark:focus:bg-gray-600 transition-all ${isListening ? 'ring-2 ring-red-500 bg-red-50 dark:bg-red-900/20' : ''}`}
                   />
                   <button
                     onClick={handleSendMessage}
                     disabled={!chatInput.trim()}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-5 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 active:bg-blue-800 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hover:shadow-md disabled:shadow-none"
                   >
                     <Send className="w-5 h-5" />
                   </button>
                 </div>
                 {isListening && (
-                  <div className="mt-2 text-xs text-red-500 flex items-center gap-1">
-                    <Radio className="w-3 h-3 animate-pulse" /> Listening... speak your question
+                  <div className="mt-3 text-sm text-red-600 dark:text-red-400 flex items-center gap-2">
+                    <Radio className="w-4 h-4 animate-pulse" /> Listening... speak your question
                   </div>
                 )}
               </div>
