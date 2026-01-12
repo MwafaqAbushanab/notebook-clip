@@ -50,6 +50,16 @@ const CLIPKnowledgeDashboard = () => {
   const [confluenceParentPage, setConfluenceParentPage] = useState('');
   const [knowledgeStats, setKnowledgeStats] = useState({ builtInChunks: 0, uploadedDocuments: 0, totalChunks: 0 });
 
+  // Voice input state
+  const [isListening, setIsListening] = useState(false);
+  const [voiceSupported, setVoiceSupported] = useState(false);
+  const recognitionRef = useRef(null);
+
+  // Share state
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [shareContent, setShareContent] = useState(null);
+  const [copiedToClipboard, setCopiedToClipboard] = useState(false);
+
   const chatEndRef = useRef(null);
   const speechSynthRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -89,6 +99,78 @@ const CLIPKnowledgeDashboard = () => {
     const interval = setInterval(fetchStats, 30000);
     return () => clearInterval(interval);
   }, []);
+
+  // Initialize voice recognition
+  useEffect(() => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SpeechRecognition) {
+      setVoiceSupported(true);
+      const recognition = new SpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = true;
+      recognition.lang = 'en-US';
+
+      recognition.onresult = (event) => {
+        const transcript = Array.from(event.results)
+          .map(result => result[0].transcript)
+          .join('');
+        setChatInput(transcript);
+      };
+
+      recognition.onend = () => {
+        setIsListening(false);
+      };
+
+      recognition.onerror = (event) => {
+        console.error('Speech recognition error:', event.error);
+        setIsListening(false);
+      };
+
+      recognitionRef.current = recognition;
+    }
+  }, []);
+
+  // Toggle voice input
+  const toggleVoiceInput = () => {
+    if (!recognitionRef.current) return;
+
+    if (isListening) {
+      recognitionRef.current.stop();
+      setIsListening(false);
+    } else {
+      setChatInput('');
+      recognitionRef.current.start();
+      setIsListening(true);
+    }
+  };
+
+  // Share/Copy functionality
+  const handleShare = (message) => {
+    setShareContent(message);
+    setShowShareModal(true);
+    setCopiedToClipboard(false);
+  };
+
+  const copyToClipboard = async (text) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedToClipboard(true);
+      setTimeout(() => setCopiedToClipboard(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy:', err);
+    }
+  };
+
+  const shareViaEmail = (content) => {
+    const subject = encodeURIComponent('CLIP Knowledge Base - Shared Answer');
+    const body = encodeURIComponent(`Question: ${shareContent?.question || 'N/A'}\n\nAnswer:\n${content}\n\nShared from CLIP Knowledge Dashboard`);
+    window.open(`mailto:?subject=${subject}&body=${body}`);
+  };
+
+  const shareViaTeams = (content) => {
+    const text = encodeURIComponent(`**CLIP Knowledge Base**\n\n${content}`);
+    window.open(`https://teams.microsoft.com/share?msgText=${text}`);
+  };
 
   // Generate response from knowledge base ONLY
   const generateKnowledgeBaseResponse = useCallback((query) => {
@@ -3897,6 +3979,25 @@ CLIP (Credit Line Increase Program) analyzes your member data to identify those 
                           </div>
                         </div>
                       )}
+                      {/* Share button for assistant messages */}
+                      {msg.role !== 'user' && (
+                        <div className="mt-2 pt-2 border-t border-gray-200 dark:border-gray-600 flex gap-2">
+                          <button
+                            onClick={() => copyToClipboard(msg.content)}
+                            className="text-xs px-2 py-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 flex items-center gap-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
+                            title="Copy to clipboard"
+                          >
+                            <Copy className="w-3 h-3" /> Copy
+                          </button>
+                          <button
+                            onClick={() => handleShare({ content: msg.content, question: chatMessages[idx-1]?.content })}
+                            className="text-xs px-2 py-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 flex items-center gap-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
+                            title="Share this answer"
+                          >
+                            <Share2 className="w-3 h-3" /> Share
+                          </button>
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -3918,13 +4019,27 @@ CLIP (Credit Line Increase Program) analyzes your member data to identify those 
 
               <div className="p-4 bg-white dark:bg-gray-800 border-t dark:border-gray-700 rounded-b-xl">
                 <div className="flex gap-2">
+                  {/* Voice Input Button */}
+                  {voiceSupported && (
+                    <button
+                      onClick={toggleVoiceInput}
+                      className={`px-3 py-2 rounded-xl transition-all ${
+                        isListening
+                          ? 'bg-red-500 text-white animate-pulse'
+                          : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                      }`}
+                      title={isListening ? 'Stop listening' : 'Voice input'}
+                    >
+                      {isListening ? <Radio className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
+                    </button>
+                  )}
                   <input
                     type="text"
                     value={chatInput}
                     onChange={(e) => setChatInput(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSendMessage()}
-                    placeholder="Ask about CLIP parameters, process, TransUnion..."
-                    className="flex-1 px-4 py-2 border dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder={isListening ? "Listening... speak now" : "Ask about CLIP parameters, process, TransUnion..."}
+                    className={`flex-1 px-4 py-2 border dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 ${isListening ? 'border-red-500 ring-2 ring-red-200' : ''}`}
                   />
                   <button
                     onClick={handleSendMessage}
@@ -3934,6 +4049,11 @@ CLIP (Credit Line Increase Program) analyzes your member data to identify those 
                     <Send className="w-5 h-5" />
                   </button>
                 </div>
+                {isListening && (
+                  <div className="mt-2 text-xs text-red-500 flex items-center gap-1">
+                    <Radio className="w-3 h-3 animate-pulse" /> Listening... speak your question
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -4063,6 +4183,79 @@ CLIP (Credit Line Increase Program) analyzes your member data to identify those 
                   ))}
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Share Modal */}
+      {showShareModal && shareContent && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-xl w-full max-w-lg mx-4 overflow-hidden shadow-2xl">
+            <div className="p-4 border-b dark:border-gray-700 flex items-center justify-between">
+              <h3 className="font-semibold dark:text-white flex items-center gap-2">
+                <Share2 className="w-5 h-5" />
+                Share Answer
+              </h3>
+              <button
+                onClick={() => setShowShareModal(false)}
+                className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
+              >
+                <X className="w-5 h-5 text-gray-500" />
+              </button>
+            </div>
+
+            <div className="p-4 space-y-4">
+              {shareContent.question && (
+                <div>
+                  <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Question:</p>
+                  <p className="text-sm text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 p-2 rounded">{shareContent.question}</p>
+                </div>
+              )}
+
+              <div>
+                <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Answer:</p>
+                <pre className="text-sm text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 p-3 rounded max-h-48 overflow-y-auto whitespace-pre-wrap font-sans">{shareContent.content}</pre>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  onClick={() => copyToClipboard(shareContent.content)}
+                  className="flex items-center justify-center gap-2 px-4 py-3 border dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                >
+                  {copiedToClipboard ? (
+                    <>
+                      <Check className="w-5 h-5 text-green-500" />
+                      <span className="text-green-600 dark:text-green-400">Copied!</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+                      <span className="text-gray-700 dark:text-gray-300">Copy Text</span>
+                    </>
+                  )}
+                </button>
+
+                <button
+                  onClick={() => shareViaEmail(shareContent.content)}
+                  className="flex items-center justify-center gap-2 px-4 py-3 border dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                >
+                  <Mail className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+                  <span className="text-gray-700 dark:text-gray-300">Email</span>
+                </button>
+
+                <button
+                  onClick={() => shareViaTeams(shareContent.content)}
+                  className="flex items-center justify-center gap-2 px-4 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors col-span-2"
+                >
+                  <Users className="w-5 h-5" />
+                  Share to Teams
+                </button>
+              </div>
+
+              <p className="text-xs text-gray-500 text-center">
+                Share this answer with your team or save it for later reference.
+              </p>
             </div>
           </div>
         </div>
