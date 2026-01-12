@@ -11,7 +11,8 @@ import {
   Mic, Radio, BookMarked, ListChecks, Map, Quote, Plus, X, Upload,
   Video, Link2, Globe, Image, FileAudio, Trash2, Eye, UploadCloud,
   GitMerge, ShieldAlert, FileWarning, Activity, Gauge, ClipboardList,
-  UserCheck, Projector, TestTube, BookOpenCheck, ArrowRight, ArrowDown
+  UserCheck, Projector, TestTube, BookOpenCheck, ArrowRight, ArrowDown,
+  Keyboard, Command
 } from 'lucide-react';
 import { clipDocuments, sources, categories } from '../data/clipDocuments';
 import { searchDocuments, keywordSearch, getDocumentsByCategory } from '../utils/vectorSearch';
@@ -19,7 +20,13 @@ import { searchDocuments, keywordSearch, getDocumentsByCategory } from '../utils
 const CLIPKnowledgeDashboard = () => {
   // State management
   const [activeTab, setActiveTab] = useState('notebook');
-  const [darkMode, setDarkMode] = useState(false);
+  // Dark mode: check localStorage first, then system preference
+  const [darkMode, setDarkMode] = useState(() => {
+    const saved = localStorage.getItem('clipDashboardDarkMode');
+    if (saved !== null) return saved === 'true';
+    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+  });
+  const [showKeyboardHelp, setShowKeyboardHelp] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [chatMessages, setChatMessages] = useState([]);
   const [chatInput, setChatInput] = useState('');
@@ -67,14 +74,29 @@ const CLIPKnowledgeDashboard = () => {
   const folderInputRef = useRef(null);
   const documentInputRef = useRef(null);
 
-  // Dark mode effect
+  // Dark mode effect - persist to localStorage and update document class
   useEffect(() => {
+    localStorage.setItem('clipDashboardDarkMode', darkMode);
     if (darkMode) {
       document.documentElement.classList.add('dark');
     } else {
       document.documentElement.classList.remove('dark');
     }
   }, [darkMode]);
+
+  // Listen for system preference changes
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleChange = (e) => {
+      // Only auto-switch if user hasn't manually set preference
+      const saved = localStorage.getItem('clipDashboardDarkMode');
+      if (saved === null) {
+        setDarkMode(e.matches);
+      }
+    };
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, []);
 
   // Auto-scroll chat
   useEffect(() => {
@@ -128,6 +150,87 @@ const CLIPKnowledgeDashboard = () => {
 
       recognitionRef.current = recognition;
     }
+  }, []);
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      // Don't trigger shortcuts when typing in input fields
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+        // Allow Escape to blur input
+        if (e.key === 'Escape') {
+          e.target.blur();
+        }
+        return;
+      }
+
+      // Ctrl/Cmd + key shortcuts
+      if (e.ctrlKey || e.metaKey) {
+        switch (e.key.toLowerCase()) {
+          case 'k': // Focus chat input
+            e.preventDefault();
+            document.querySelector('input[placeholder*="Ask about CLIP"]')?.focus();
+            break;
+          case 'd': // Toggle dark mode
+            e.preventDefault();
+            setDarkMode(prev => !prev);
+            break;
+          case '/': // Show keyboard shortcuts
+            e.preventDefault();
+            setShowKeyboardHelp(prev => !prev);
+            break;
+          default:
+            break;
+        }
+      }
+
+      // Single key shortcuts (when not in input)
+      switch (e.key) {
+        case '?': // Show keyboard shortcuts
+          e.preventDefault();
+          setShowKeyboardHelp(prev => !prev);
+          break;
+        case '1': // Tab: Notebook
+          e.preventDefault();
+          setActiveTab('notebook');
+          break;
+        case '2': // Tab: Chat
+          e.preventDefault();
+          setActiveTab('chat');
+          break;
+        case '3': // Tab: Value Stream
+          e.preventDefault();
+          setActiveTab('valuestream');
+          break;
+        case '4': // Tab: Operations
+          e.preventDefault();
+          setActiveTab('operations');
+          break;
+        case '5': // Tab: Gaps
+          e.preventDefault();
+          setActiveTab('gaps');
+          break;
+        case '6': // Tab: Training
+          e.preventDefault();
+          setActiveTab('training');
+          break;
+        case '7': // Tab: Browse
+          e.preventDefault();
+          setActiveTab('browse');
+          break;
+        case 'Escape': // Close modals
+          setShowKeyboardHelp(false);
+          setShowShareModal(false);
+          setShowAddSourceModal(false);
+          setShowExportModal(false);
+          break;
+        default:
+          break;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
   // Toggle voice input
@@ -3895,8 +3998,16 @@ CLIP (Credit Line Increase Program) analyzes your member data to identify those 
             <button
               onClick={() => setDarkMode(!darkMode)}
               className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+              title="Toggle dark mode (Ctrl+D)"
             >
               {darkMode ? <Sun className="w-5 h-5 text-yellow-500" /> : <Moon className="w-5 h-5 text-gray-500" />}
+            </button>
+            <button
+              onClick={() => setShowKeyboardHelp(true)}
+              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+              title="Keyboard shortcuts (?)"
+            >
+              <Keyboard className="w-5 h-5 text-gray-500 dark:text-gray-400" />
             </button>
           </div>
         </div>
@@ -4352,6 +4463,101 @@ CLIP (Credit Line Increase Program) analyzes your member data to identify those 
               <p className="text-xs text-gray-500 text-center">
                 Export downloads a Confluence-formatted file. You can then import it into your Confluence space.
               </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Keyboard Shortcuts Help Modal */}
+      {showKeyboardHelp && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setShowKeyboardHelp(false)}>
+          <div className="bg-white dark:bg-gray-800 rounded-xl w-full max-w-lg mx-4 overflow-hidden shadow-2xl" onClick={(e) => e.stopPropagation()}>
+            <div className="p-4 border-b dark:border-gray-700 flex items-center justify-between">
+              <h3 className="font-semibold dark:text-white flex items-center gap-2">
+                <Keyboard className="w-5 h-5" />
+                Keyboard Shortcuts
+              </h3>
+              <button
+                onClick={() => setShowKeyboardHelp(false)}
+                className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
+              >
+                <X className="w-5 h-5 text-gray-500" />
+              </button>
+            </div>
+
+            <div className="p-4 space-y-4 max-h-96 overflow-y-auto">
+              {/* Navigation */}
+              <div>
+                <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Navigation</h4>
+                <div className="space-y-2">
+                  {[
+                    { keys: ['1'], action: 'Go to Notebook' },
+                    { keys: ['2'], action: 'Go to Chat' },
+                    { keys: ['3'], action: 'Go to Value Stream' },
+                    { keys: ['4'], action: 'Go to Operations' },
+                    { keys: ['5'], action: 'Go to Gaps' },
+                    { keys: ['6'], action: 'Go to Training' },
+                    { keys: ['7'], action: 'Go to Browse' },
+                  ].map((shortcut, i) => (
+                    <div key={i} className="flex items-center justify-between">
+                      <span className="text-sm text-gray-700 dark:text-gray-300">{shortcut.action}</span>
+                      <div className="flex gap-1">
+                        {shortcut.keys.map((key, j) => (
+                          <kbd key={j} className="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-xs font-mono text-gray-700 dark:text-gray-300 border dark:border-gray-600">
+                            {key}
+                          </kbd>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div>
+                <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Actions</h4>
+                <div className="space-y-2">
+                  {[
+                    { keys: ['Ctrl', 'K'], action: 'Focus chat input' },
+                    { keys: ['Ctrl', 'D'], action: 'Toggle dark mode' },
+                    { keys: ['?'], action: 'Show keyboard shortcuts' },
+                    { keys: ['Esc'], action: 'Close modals / Blur input' },
+                  ].map((shortcut, i) => (
+                    <div key={i} className="flex items-center justify-between">
+                      <span className="text-sm text-gray-700 dark:text-gray-300">{shortcut.action}</span>
+                      <div className="flex gap-1">
+                        {shortcut.keys.map((key, j) => (
+                          <React.Fragment key={j}>
+                            <kbd className="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-xs font-mono text-gray-700 dark:text-gray-300 border dark:border-gray-600">
+                              {key}
+                            </kbd>
+                            {j < shortcut.keys.length - 1 && <span className="text-gray-400 text-xs">+</span>}
+                          </React.Fragment>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Tips */}
+              <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-3">
+                <h4 className="text-sm font-medium text-blue-800 dark:text-blue-300 mb-1">Tips</h4>
+                <ul className="text-xs text-blue-700 dark:text-blue-400 space-y-1">
+                  <li>• Number keys work when not focused on an input field</li>
+                  <li>• Press Escape while typing to unfocus the input</li>
+                  <li>• On Mac, use Cmd instead of Ctrl</li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="p-4 border-t dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
+              <button
+                onClick={() => setShowKeyboardHelp(false)}
+                className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                Got it!
+              </button>
             </div>
           </div>
         </div>
