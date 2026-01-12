@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
+import ReactMarkdown from 'react-markdown';
 import {
   BookOpen, MessageSquare, GitBranch, Settings, Search, Send,
   ChevronRight, FileText, Database, Shield, Clock, DollarSign,
@@ -1855,7 +1856,7 @@ Generated: ${new Date().toLocaleString()}
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           {/* Audio Overview */}
           {audioContent && (
-            <div className="bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl p-4 text-white">
+            <div className="bg-purple-600 dark:bg-purple-700 rounded-xl p-4 text-white shadow-sm">
               <div className="flex items-center justify-between mb-3">
                 <h3 className="font-semibold flex items-center gap-2">
                   <Radio className="w-5 h-5" /> Audio Overview ({audioContent.format})
@@ -2515,12 +2516,12 @@ Generated: ${new Date().toLocaleString()}
     return (
       <div className="p-6 space-y-6">
         {/* Header */}
-        <div className="bg-gradient-to-r from-purple-600 to-blue-600 rounded-xl p-6 text-white">
+        <div className="bg-slate-800 dark:bg-slate-900 rounded-xl p-6 text-white shadow-sm border border-slate-700">
           <h2 className="text-2xl font-bold flex items-center gap-3">
             <GitMerge className="w-7 h-7" />
             CLIP Value Stream Map
           </h2>
-          <p className="mt-2 text-purple-100">End-to-end process from intake to delivery with automation opportunities</p>
+          <p className="mt-2 text-slate-300">End-to-end process from intake to delivery with automation opportunities</p>
         </div>
 
         {/* Metrics Summary */}
@@ -2595,9 +2596,9 @@ Generated: ${new Date().toLocaleString()}
               const phase = valueStreamPhases.find(p => p.id === selectedPhase);
               return (
                 <>
-                  <div className="p-4 border-b dark:border-gray-700 bg-gradient-to-r from-purple-500 to-blue-500 text-white">
+                  <div className="p-4 border-b dark:border-gray-700 bg-slate-700 dark:bg-slate-800 text-white">
                     <h3 className="text-lg font-semibold">Phase {phase.id}: {phase.name}</h3>
-                    <p className="text-sm text-purple-100">Duration: {phase.duration}</p>
+                    <p className="text-sm text-slate-300">Duration: {phase.duration}</p>
                   </div>
                   <div className="p-4 grid md:grid-cols-2 gap-6">
                     {/* Left Column */}
@@ -2792,12 +2793,12 @@ Generated: ${new Date().toLocaleString()}
     return (
       <div className="p-6 space-y-6">
         {/* Header */}
-        <div className="bg-gradient-to-r from-green-600 to-teal-600 rounded-xl p-6 text-white">
+        <div className="bg-emerald-700 dark:bg-emerald-800 rounded-xl p-6 text-white shadow-sm border border-emerald-600">
           <h2 className="text-2xl font-bold flex items-center gap-3">
             <Activity className="w-7 h-7" />
             CLIP Operations Center
           </h2>
-          <p className="mt-2 text-green-100">Risks, KPIs, team responsibilities, and operational runbooks</p>
+          <p className="mt-2 text-emerald-100">Risks, KPIs, team responsibilities, and operational runbooks</p>
         </div>
 
         {/* Section Tabs */}
@@ -3101,12 +3102,12 @@ Generated: ${new Date().toLocaleString()}
     return (
       <div className="p-6 space-y-6">
         {/* Header */}
-        <div className="bg-gradient-to-r from-orange-600 to-red-600 rounded-xl p-6 text-white">
+        <div className="bg-amber-700 dark:bg-amber-800 rounded-xl p-6 text-white shadow-sm border border-amber-600">
           <h2 className="text-2xl font-bold flex items-center gap-3">
             <FileWarning className="w-7 h-7" />
             CLIP Gap Analysis
           </h2>
-          <p className="mt-2 text-orange-100">Identified gaps with recommendations for process improvements</p>
+          <p className="mt-2 text-amber-100">Identified gaps with recommendations for process improvements</p>
         </div>
 
         {/* Stats */}
@@ -3630,6 +3631,215 @@ Solutions: Apply unique ID logic (SSN+DOB)
 • Support: Kayla, Paolo
 • Workspace Admin: Rob-Logan
 • Shared Drive: Manish`
+      },
+      {
+        title: "Quality Assurance & Validation",
+        duration: "30 min",
+        description: "Comprehensive guide to QA processes and validation checkpoints",
+        topics: ["QA checklist", "Validation steps", "Error handling", "Sign-off process"],
+        content: `**Pre-Processing QA Checklist:**
+
+1. **Data Completeness Check**
+   • Verify all required fields are present
+   • Check for null/empty values in critical fields
+   • Validate SSN format (XXX-XX-XXXX or 9 digits)
+   • Confirm date formats are consistent
+
+2. **Data Quality Validation**
+   • Run duplicate detection on SSN + DOB combination
+   • Verify income values are within reasonable range ($15K - $500K)
+   • Check credit limits are positive and reasonable
+   • Validate account ages (origination dates)
+
+3. **File Format Verification**
+   • Confirm correct delimiter (comma for CSV)
+   • Check encoding (UTF-8 preferred)
+   • Verify no special characters in data fields
+   • Validate column headers match expected schema
+
+**Post-Processing Validation:**
+
+1. **Output File Checks**
+   • Total records processed matches input count
+   • No records lost during processing
+   • Approve/Reject counts sum to total
+   • All required output fields populated
+
+2. **Business Rule Validation**
+   • No approvals below minimum FICO (650)
+   • No approvals exceeding max limits by tier
+   • Aggregate limits enforced correctly
+   • Exclusion criteria properly applied
+
+3. **Statistical Sanity Checks**
+   • Approval rate within expected range (50-75%)
+   • Average increase amount reasonable
+   • Distribution of increase tiers balanced
+   • No anomalous patterns in results
+
+**Error Handling Protocol:**
+
+| Error Type | Action | Escalation |
+|------------|--------|------------|
+| Missing required field | Return to client | None |
+| Invalid SSN format | Attempt correction | Support if >10% |
+| TU file timeout | Retry submission | TU contact after 3 tries |
+| Processing failure | Review logs | Lead if unresolved |
+
+**Sign-Off Checklist:**
+☐ All validation checks passed
+☐ Output files match expected format
+☐ Statistics reviewed and reasonable
+☐ Documentation complete
+☐ Client communication prepared`
+      },
+      {
+        title: "Advanced Configuration Options",
+        duration: "35 min",
+        description: "Customizing CLIP parameters for different client scenarios",
+        topics: ["Parameter tuning", "Custom rules", "Tier adjustments", "Special scenarios"],
+        content: `**Configurable Parameters:**
+
+**Credit Score Thresholds:**
+\`\`\`
+Default Configuration:
+MIN_FICO = 650
+TIER_1_MIN = 776  # Excellent
+TIER_2_MIN = 726  # Good
+TIER_3_MIN = 650  # Fair
+\`\`\`
+
+Clients can request adjusted thresholds based on:
+• Portfolio risk tolerance
+• Historical default rates
+• Strategic growth targets
+
+**Income & DTI Configuration:**
+
+| Parameter | Default | Min Allowed | Max Allowed |
+|-----------|---------|-------------|-------------|
+| MIN_INCOME | $20,000 | $15,000 | $50,000 |
+| MAX_DTI | 50% | 35% | 65% |
+| INCOME_TYPE | Gross | Gross/Net | Gross/Net |
+
+**Account Age Requirements:**
+• Standard: 12 months since origination
+• Accelerated (higher risk): 6 months
+• Conservative: 18 months
+
+**Custom Exclusion Rules:**
+
+1. **Lookback Periods**
+   • Bankruptcy: 24-84 months (default: 84)
+   • Collections: 12-36 months (default: 24)
+   • Delinquency: 6-24 months (default: 12)
+
+2. **Additional Exclusions (Client Specific)**
+   • Geographic restrictions
+   • Product type exclusions
+   • Balance thresholds
+   • Utilization limits
+
+**Increase Tier Customization:**
+
+Standard tiers can be adjusted for:
+• Aggressive growth: Higher increase amounts
+• Conservative: Lower increase amounts
+• Segment-specific: Different tiers by product
+
+**Example Custom Configuration:**
+\`\`\`
+Client: Example CU
+MIN_FICO: 680 (vs 650 default)
+MAX_DTI: 45% (vs 50% default)
+BANKRUPTCY_LOOKBACK: 60 months
+MAX_INCREASE: $15,000 (vs $20,000)
+TIER_1_LIMIT: $20,000 (vs $25,000)
+\`\`\`
+
+**Documentation Requirements:**
+All custom configurations must be:
+• Documented in client profile
+• Approved by risk/compliance
+• Version controlled with dates
+• Reviewed annually`
+      },
+      {
+        title: "Reporting & Analytics",
+        duration: "25 min",
+        description: "Understanding CLIP reports, metrics, and performance tracking",
+        topics: ["Report types", "Key metrics", "Performance tracking", "Client presentations"],
+        content: `**Standard Report Package:**
+
+1. **Executive Summary Report**
+   • Total records analyzed
+   • Approval/rejection breakdown
+   • Average increase amount
+   • Estimated revenue impact
+   • Risk distribution
+
+2. **Detailed Results File**
+   • Member-level recommendations
+   • Current vs proposed limits
+   • Risk scores and tiers
+   • Exclusion reasons (if rejected)
+
+3. **Rejection Analysis Report**
+   • Categorized rejection reasons
+   • Improvement recommendations
+   • Re-eligibility timeline
+
+**Key Performance Indicators:**
+
+| Metric | Target | Calculation |
+|--------|--------|-------------|
+| Approval Rate | 60-70% | Approved / Total Analyzed |
+| Avg Increase | $3-5K | Sum(Increases) / Approved |
+| Accept Rate | 30-50% | Members Accepting / Approved |
+| Utilization Lift | 10-20% | Post-Utilization / Pre-Utilization |
+| Delinquency Rate | <2% | 30+ DPD / Total Increased |
+
+**Performance Tracking Dashboard:**
+
+Monitor these metrics over time:
+• Monthly approval trends
+• Increase amount distribution
+• Risk tier breakdown
+• Client satisfaction scores
+• Processing time metrics
+
+**Client Presentation Template:**
+
+1. **Opening Slide**
+   • Analysis date range
+   • Total population analyzed
+   • Key highlights
+
+2. **Results Overview**
+   • Approval funnel visualization
+   • Top rejection reasons
+   • Tier distribution chart
+
+3. **Financial Impact**
+   • Potential new credit extended
+   • Estimated interest income
+   • ROI calculation
+
+4. **Risk Analysis**
+   • Risk score distribution
+   • Comparison to industry benchmarks
+   • Portfolio impact assessment
+
+5. **Recommendations**
+   • Implementation timeline
+   • Communication strategy
+   • Follow-up analysis schedule
+
+**Quarterly Business Reviews:**
+• Trend analysis vs previous quarters
+• Benchmark against similar CUs
+• Identify optimization opportunities
+• Plan for next quarter`
       }
     ];
 
@@ -3745,6 +3955,146 @@ CLIP (Credit Line Increase Program) analyzes your member data to identify those 
 • Use consistent date formats
 • Include income data when available
 • Update member addresses`
+      },
+      {
+        title: "Frequently Asked Questions",
+        duration: "10 min",
+        description: "Common questions and answers about the CLIP program",
+        topics: ["Eligibility", "Process", "Results", "Troubleshooting"],
+        content: `**Q: How often can we run CLIP analysis?**
+A: We recommend quarterly analyses. More frequent runs (monthly) are possible but may show diminishing returns as the same members may not have significantly changed eligibility status.
+
+**Q: What happens if a member was rejected last time?**
+A: Members are re-evaluated each cycle. If their circumstances have changed (credit score improved, income increased, accounts aged), they may now qualify.
+
+**Q: Can we customize the increase amounts?**
+A: Yes! We can adjust the tier structure based on your risk appetite and strategic goals. Contact your account manager to discuss customization.
+
+**Q: How is the credit pull performed?**
+A: We use TransUnion soft pulls which do not impact member credit scores. The pull provides 419 data fields for comprehensive analysis.
+
+**Q: What if our data is in a different format?**
+A: We can work with various data formats. During onboarding, we'll help map your fields to our required schema.
+
+**Q: How long do results remain valid?**
+A: Results are valid for 30 days from analysis date. After that, credit data may be stale and a new analysis is recommended.
+
+**Q: Can members opt-out of CLI offers?**
+A: Yes, you can provide us with an exclusion list of members who should not be considered for increases.
+
+**Q: What's the typical ROI for CLIP?**
+A: Credit unions typically see 3-5x ROI within the first year through increased interest income and member retention.`
+      },
+      {
+        title: "Implementation Guide",
+        duration: "20 min",
+        description: "Step-by-step guide to implementing CLIP recommendations",
+        topics: ["Processing results", "Member communication", "System updates", "Monitoring"],
+        content: `**After Receiving Your Results:**
+
+**Step 1: Review & Validate (Day 1)**
+• Download the results package
+• Review the executive summary
+• Validate sample records manually
+• Note any questions for your account manager
+
+**Step 2: Internal Approval (Day 2-3)**
+• Present to credit committee if required
+• Get sign-off from compliance
+• Confirm implementation timeline
+
+**Step 3: System Updates (Day 4-5)**
+• Update credit limits in core system
+• Generate member notification letters
+• Configure online banking displays
+• Update card processing limits
+
+**Step 4: Member Communication (Day 6-7)**
+Sample letter template:
+
+> Dear [Member Name],
+>
+> Great news! Based on your excellent payment history, we've increased your [Product] credit limit from $[Current] to $[New].
+>
+> This increase is effective immediately. No action is required on your part.
+>
+> Thank you for being a valued member.
+
+**Step 5: Monitor Results (Ongoing)**
+• Track acceptance rates
+• Monitor utilization changes
+• Watch for early delinquency signals
+• Report issues to Trellance team
+
+**Common Implementation Issues:**
+
+| Issue | Solution |
+|-------|----------|
+| Core system update failed | Contact IT; provide batch file format |
+| Letters not generating | Check mail merge template fields |
+| Member disputes increase | Review with member; escalate if needed |
+| Utilization spike | Normal; monitor for 60-90 days |
+
+**Success Checklist:**
+☐ Results validated and approved
+☐ System limits updated
+☐ Member notifications sent
+☐ Staff trained on new limits
+☐ Monitoring process established`
+      },
+      {
+        title: "Security & Compliance",
+        duration: "15 min",
+        description: "Understanding data security and compliance requirements",
+        topics: ["Data handling", "Privacy", "Audit requirements", "Certifications"],
+        content: `**Data Security Standards:**
+
+Trellance maintains:
+• SOC 2 Type II certification
+• GLBA compliance
+• State regulatory compliance
+• Annual third-party security audits
+
+**Data Transmission:**
+• All files transferred via encrypted channels
+• Box.com with enterprise security
+• No email attachments for PII
+• Files deleted after processing
+
+**Your Responsibilities:**
+
+1. **Data Extraction**
+   • Extract from secure core system
+   • Include only necessary fields
+   • Avoid exporting to local drives
+
+2. **File Transfer**
+   • Use provided Box link only
+   • Don't store files locally
+   • Confirm upload successful
+
+3. **Results Handling**
+   • Download to secure location
+   • Limit access to authorized staff
+   • Delete files after implementation
+
+**Audit Trail:**
+We maintain complete audit logs of:
+• File uploads and downloads
+• Processing timestamps
+• User access records
+• System changes
+
+**Compliance Certifications:**
+• Annual penetration testing
+• Quarterly vulnerability scans
+• Employee background checks
+• Security awareness training
+
+**In Case of Questions:**
+Contact your account manager or:
+• Security: security@trellance.com
+• Compliance: compliance@trellance.com`
       }
     ];
 
@@ -3858,10 +4208,23 @@ CLIP (Credit Line Increase Program) analyzes your member data to identify those 
                 {/* Expanded Training Content */}
                 {expandedModule === idx && (
                   <div className="border-t dark:border-gray-700 p-5 bg-gray-50 dark:bg-gray-800/50">
-                    <div className="prose prose-sm dark:prose-invert max-w-none">
-                      <pre className="whitespace-pre-wrap font-sans text-sm text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 p-4 rounded-lg border dark:border-gray-700">
+                    <div className="prose prose-sm dark:prose-invert max-w-none bg-white dark:bg-gray-800 p-5 rounded-lg border dark:border-gray-700">
+                      <ReactMarkdown
+                        components={{
+                          h1: ({children}) => <h1 className="text-xl font-bold text-gray-900 dark:text-white mb-3">{children}</h1>,
+                          h2: ({children}) => <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-2 mt-4">{children}</h2>,
+                          h3: ({children}) => <h3 className="text-base font-semibold text-gray-800 dark:text-gray-200 mb-2 mt-3">{children}</h3>,
+                          p: ({children}) => <p className="text-gray-700 dark:text-gray-300 mb-3 leading-relaxed">{children}</p>,
+                          strong: ({children}) => <strong className="font-bold text-gray-900 dark:text-white">{children}</strong>,
+                          ul: ({children}) => <ul className="list-disc list-inside mb-3 space-y-1 text-gray-700 dark:text-gray-300">{children}</ul>,
+                          ol: ({children}) => <ol className="list-decimal list-inside mb-3 space-y-1 text-gray-700 dark:text-gray-300">{children}</ol>,
+                          li: ({children}) => <li className="text-gray-700 dark:text-gray-300">{children}</li>,
+                          code: ({children}) => <code className="bg-gray-100 dark:bg-gray-700 px-1.5 py-0.5 rounded text-sm font-mono text-blue-600 dark:text-blue-400">{children}</code>,
+                          blockquote: ({children}) => <blockquote className="border-l-4 border-blue-500 pl-4 italic text-gray-600 dark:text-gray-400 my-3">{children}</blockquote>,
+                        }}
+                      >
                         {module.content}
-                      </pre>
+                      </ReactMarkdown>
                     </div>
                     <div className="mt-4 flex items-center justify-between">
                       <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
@@ -3893,8 +4256,8 @@ CLIP (Credit Line Increase Program) analyzes your member data to identify those 
               <span className="text-sm text-gray-500 dark:text-gray-400">10 Steps • 2-3 Business Days</span>
             </div>
 
-            <div className="bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 rounded-xl p-4 mb-4 border border-purple-200 dark:border-purple-800">
-              <p className="text-sm text-purple-700 dark:text-purple-300">
+            <div className="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-4 mb-4 border border-slate-200 dark:border-slate-700">
+              <p className="text-sm text-slate-600 dark:text-slate-300">
                 Complete walkthrough of the CLIP process from client request to final delivery. Click any step to expand details.
               </p>
             </div>
@@ -3979,20 +4342,20 @@ CLIP (Credit Line Increase Program) analyzes your member data to identify those 
         <div className="mt-8">
           <h3 className="font-semibold dark:text-white mb-4">Quick Reference</h3>
           <div className="grid md:grid-cols-3 gap-4">
-            <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-5 text-white cursor-pointer hover:shadow-lg transition-shadow">
-              <FileText className="w-8 h-8 mb-3 opacity-80" />
+            <div className="bg-blue-600 dark:bg-blue-700 rounded-xl p-5 text-white cursor-pointer hover:bg-blue-700 dark:hover:bg-blue-600 hover:shadow-md transition-all border border-blue-500">
+              <FileText className="w-8 h-8 mb-3 opacity-90" />
               <h4 className="font-semibold mb-1">Process Checklist</h4>
-              <p className="text-sm opacity-80">Step-by-step CLIP processing guide</p>
+              <p className="text-sm text-blue-100">Step-by-step CLIP processing guide</p>
             </div>
-            <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl p-5 text-white cursor-pointer hover:shadow-lg transition-shadow">
-              <ListChecks className="w-8 h-8 mb-3 opacity-80" />
+            <div className="bg-violet-600 dark:bg-violet-700 rounded-xl p-5 text-white cursor-pointer hover:bg-violet-700 dark:hover:bg-violet-600 hover:shadow-md transition-all border border-violet-500">
+              <ListChecks className="w-8 h-8 mb-3 opacity-90" />
               <h4 className="font-semibold mb-1">Eligibility Criteria</h4>
-              <p className="text-sm opacity-80">All parameters at a glance</p>
+              <p className="text-sm text-violet-100">All parameters at a glance</p>
             </div>
-            <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-5 text-white cursor-pointer hover:shadow-lg transition-shadow">
-              <HelpCircle className="w-8 h-8 mb-3 opacity-80" />
+            <div className="bg-emerald-600 dark:bg-emerald-700 rounded-xl p-5 text-white cursor-pointer hover:bg-emerald-700 dark:hover:bg-emerald-600 hover:shadow-md transition-all border border-emerald-500">
+              <HelpCircle className="w-8 h-8 mb-3 opacity-90" />
               <h4 className="font-semibold mb-1">FAQ Document</h4>
-              <p className="text-sm opacity-80">Common questions answered</p>
+              <p className="text-sm text-emerald-100">Common questions answered</p>
             </div>
           </div>
         </div>
@@ -4016,7 +4379,7 @@ CLIP (Credit Line Increase Program) analyzes your member data to identify those 
       <header className="bg-white dark:bg-gray-800 border-b dark:border-gray-700 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center text-white font-bold">
+            <div className="w-10 h-10 bg-slate-800 dark:bg-slate-700 rounded-lg flex items-center justify-center text-white font-bold shadow-sm border border-slate-600">
               CL
             </div>
             <div>
@@ -4095,11 +4458,11 @@ CLIP (Credit Line Increase Program) analyzes your member data to identify those 
         {activeTab === 'chat' && (
           <div className="p-4">
             <div className="flex flex-col h-[calc(100vh-140px)]">
-              <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-t-xl p-4 text-white">
+              <div className="bg-slate-800 dark:bg-slate-900 rounded-t-xl p-4 text-white border-b border-slate-700">
                 <h2 className="text-xl font-semibold flex items-center gap-2">
                   <MessageSquare className="w-5 h-5" /> Ask about CLIP
                 </h2>
-                <p className="text-sm text-blue-100 mt-1">
+                <p className="text-sm text-slate-300 mt-1">
                   I only answer from the CLIP knowledge base - no external information
                 </p>
               </div>
