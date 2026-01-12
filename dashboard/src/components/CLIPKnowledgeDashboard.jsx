@@ -3833,15 +3833,50 @@ CLIP (Credit Line Increase Program) analyzes your member data to identify those 
                       ))}
                     </div>
                   </div>
-                  <button className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                    trainingAudience === 'internal'
-                      ? 'bg-blue-600 hover:bg-blue-700 text-white'
-                      : 'bg-green-600 hover:bg-green-700 text-white'
-                  }`}>
-                    <Play className="w-4 h-4 inline mr-1" />
-                    Start
+                  <button
+                    onClick={() => setExpandedModule(expandedModule === idx ? null : idx)}
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                      trainingAudience === 'internal'
+                        ? 'bg-blue-600 hover:bg-blue-700 text-white'
+                        : 'bg-green-600 hover:bg-green-700 text-white'
+                    }`}
+                  >
+                    {expandedModule === idx ? (
+                      <>
+                        <ChevronUp className="w-4 h-4 inline mr-1" />
+                        Close
+                      </>
+                    ) : (
+                      <>
+                        <Play className="w-4 h-4 inline mr-1" />
+                        Start
+                      </>
+                    )}
                   </button>
                 </div>
+
+                {/* Expanded Training Content */}
+                {expandedModule === idx && (
+                  <div className="border-t dark:border-gray-700 p-5 bg-gray-50 dark:bg-gray-800/50">
+                    <div className="prose prose-sm dark:prose-invert max-w-none">
+                      <pre className="whitespace-pre-wrap font-sans text-sm text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 p-4 rounded-lg border dark:border-gray-700">
+                        {module.content}
+                      </pre>
+                    </div>
+                    <div className="mt-4 flex items-center justify-between">
+                      <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+                        <CheckCircle className="w-4 h-4 text-green-500" />
+                        <span>Mark as completed when done reviewing</span>
+                      </div>
+                      <button
+                        onClick={() => setExpandedModule(null)}
+                        className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg text-sm hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                      >
+                        Close Module
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           ))}
