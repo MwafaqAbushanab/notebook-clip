@@ -8,3 +8,12 @@ __pycache__/
 thumbs.db
 .DS_Store
 .idea
+
+# Large video files (too big for GitHub)
+*.mp4
+
+# Virtual environment
+transcribe-env/
+
+# Node modules
+node_modules/
