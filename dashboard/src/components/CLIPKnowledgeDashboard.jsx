@@ -291,6 +291,7 @@ const CLIPKnowledgeDashboard = () => {
     const topDocs = relevantDocs.slice(0, 3);
     let response = "";
     const citedSources = [];
+    const detailedSources = [];
 
     topDocs.forEach((doc, idx) => {
       if (doc.score > 0.1) {
@@ -298,6 +299,13 @@ const CLIPKnowledgeDashboard = () => {
         if (!citedSources.find(s => s.source === doc.source)) {
           citedSources.push({ source: doc.source, title: doc.title, category: doc.category });
         }
+        detailedSources.push({
+          title: doc.title || doc.source,
+          id: doc.id,
+          score: doc.score,
+          excerpt: doc.content.substring(0, 200) + (doc.content.length > 200 ? '...' : ''),
+          isUploaded: doc.source?.includes('Uploaded') || false
+        });
       }
     });
 
@@ -309,12 +317,20 @@ const CLIPKnowledgeDashboard = () => {
         if (!citedSources.find(s => s.source === doc.source)) {
           citedSources.push({ source: doc.source, title: doc.title, category: doc.category });
         }
+        detailedSources.push({
+          title: doc.title || doc.source,
+          id: doc.id,
+          score: doc.score || 0.5,
+          excerpt: doc.content.substring(0, 200) + (doc.content.length > 200 ? '...' : ''),
+          isUploaded: doc.source?.includes('Uploaded') || false
+        });
       });
     }
 
     return {
       answer: response.trim() || "I found some related information but couldn't construct a complete answer. Try rephrasing your question or ask about specific CLIP topics.",
-      sources: citedSources
+      sources: citedSources,
+      detailedSources
     };
   }, []);
 
@@ -351,11 +367,12 @@ const CLIPKnowledgeDashboard = () => {
 
     // Helper function to use fallback
     const useFallback = () => {
-      const { answer, sources: citedSources } = generateKnowledgeBaseResponse(currentInput);
+      const { answer, sources: citedSources, detailedSources } = generateKnowledgeBaseResponse(currentInput);
       const assistantMessage = {
         role: 'assistant',
         content: answer,
         sources: citedSources,
+        detailedSources: detailedSources || [],
         mode: 'local'
       };
       setChatMessages(prev => [...prev, assistantMessage]);
@@ -377,6 +394,7 @@ const CLIPKnowledgeDashboard = () => {
             role: 'assistant',
             content: data.response,
             sources: data.sources?.map(s => ({ source: s, title: s })) || [],
+            detailedSources: data.detailedSources || [],
             mode: data.mode
           };
           setChatMessages(prev => [...prev, assistantMessage]);
@@ -4078,7 +4096,36 @@ CLIP (Credit Line Increase Program) analyzes your member data to identify those 
                         : 'bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 border dark:border-gray-700'
                     }`}>
                       <pre className="whitespace-pre-wrap font-sans text-sm">{msg.content}</pre>
-                      {msg.sources && msg.sources.length > 0 && (
+                      {/* Enhanced Source Citations */}
+                      {msg.detailedSources && msg.detailedSources.length > 0 ? (
+                        <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-600">
+                          <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2 flex items-center gap-1">
+                            <BookMarked className="w-3 h-3" />
+                            Sources ({msg.detailedSources.length})
+                          </p>
+                          <div className="space-y-2">
+                            {msg.detailedSources.map((source, i) => (
+                              <details key={i} className="group">
+                                <summary className="cursor-pointer text-xs px-2 py-1.5 bg-gray-100 dark:bg-gray-700 rounded text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors flex items-center gap-2">
+                                  <ChevronRight className="w-3 h-3 group-open:rotate-90 transition-transform" />
+                                  <span className="flex-1">{source.title}</span>
+                                  {source.isUploaded && (
+                                    <span className="px-1.5 py-0.5 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-[10px] rounded">
+                                      Uploaded
+                                    </span>
+                                  )}
+                                  <span className="text-[10px] text-gray-400">
+                                    {Math.round((source.score || 0) * 100)}% match
+                                  </span>
+                                </summary>
+                                <div className="mt-1 ml-5 p-2 bg-gray-50 dark:bg-gray-800 rounded text-xs text-gray-600 dark:text-gray-400 border-l-2 border-blue-400">
+                                  <p className="italic">"{source.excerpt}"</p>
+                                </div>
+                              </details>
+                            ))}
+                          </div>
+                        </div>
+                      ) : msg.sources && msg.sources.length > 0 && (
                         <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-600">
                           <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">Sources:</p>
                           <div className="flex flex-wrap gap-1">

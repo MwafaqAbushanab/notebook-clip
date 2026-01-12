@@ -342,6 +342,16 @@ app.post('/api/chat', async (req, res) => {
   if (context.length > 2000) {
     context = context.substring(0, 2000) + '...';
   }
+
+  // Build detailed source citations with excerpts
+  const detailedSources = relevantChunks.map(c => ({
+    title: c.title,
+    id: c.id,
+    score: c.score,
+    excerpt: c.content.substring(0, 200) + (c.content.length > 200 ? '...' : ''),
+    fullContent: c.content,
+    isUploaded: c.id?.startsWith('uploaded_') || c.id?.startsWith('doc_')
+  }));
   const sources = relevantChunks.map(c => c.title);
 
   // Check if Ollama is available
@@ -353,6 +363,7 @@ app.post('/api/chat', async (req, res) => {
       return res.json({
         response: "I don't have information about that in the CLIP knowledge base. Please ask about CLIP eligibility, products, credit limits, process workflow, or other CLIP-related topics.",
         sources: [],
+        detailedSources: [],
         mode: 'fallback'
       });
     }
@@ -360,6 +371,7 @@ app.post('/api/chat', async (req, res) => {
     return res.json({
       response: relevantChunks[0].content,
       sources,
+      detailedSources,
       mode: 'fallback',
       note: 'Ollama not running. Install and start Ollama for AI-powered responses.'
     });
@@ -409,6 +421,7 @@ ${context || "No relevant context found."}`;
     res.json({
       response: data.response,
       sources,
+      detailedSources,
       mode: 'ollama'
     });
   } catch (error) {
@@ -419,6 +432,7 @@ ${context || "No relevant context found."}`;
       res.json({
         response: relevantChunks[0].content,
         sources,
+        detailedSources,
         mode: 'fallback',
         error: 'Ollama error, using fallback'
       });
